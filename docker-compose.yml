@@ -13,14 +13,12 @@ x-environment:
     - ORO_APP_DOMAIN=${ORO_APP_DOMAIN-oro.demo}
 
 services:
-  restore:
+  init:
     image: docker.io/oroinc/commerce-crm-application-backup-sample_data:latest
-    hostname: restore
-    profiles:
-      - restore
+    hostname: init
     command: bash
-      -c "rm -rf /var/www/oro_app/config/* /var/www/oro_app/public/* /var/www/oro_app/var/* /var/lib/mysql/* ;
-      tar -xpzf /backup/backup.tar.gz -C / --numeric-owner && echo \"Volumes restored. You can run 'docker-compose up -d'\""
+      -c "[ -e /var/lib/mysql/wait.lock ] || { rm -rf /var/www/oro_app/config/* /var/www/oro_app/public/* /var/www/oro_app/var/* /var/lib/mysql/* ;
+      tar -xvpzf /backup/backup.tar.gz -C / --numeric-owner && touch /var/lib/mysql/wait.lock && echo \"Volumes restored. You can run 'docker-compose up -d'\" ; } "
     volumes:
       - config:/var/www/oro_app/config
       - public:/var/www/oro_app/public
@@ -30,12 +28,14 @@ services:
   db:
     image: docker.io/library/mysql:8
     hostname: mysql
+    entrypoint: /oro-entrypoint.sh
     labels:
       com.symfony.server.service-prefix: ORO_DB
     cap_add:
       - SYS_NICE
     volumes:
       - mysql:/var/lib/mysql
+      - ./oro-entrypoint.sh:/oro-entrypoint.sh
     environment:
       MYSQL_ROOT_PASSWORD: orodbpass
       MYSQL_DATABASE: orodb
@@ -45,6 +45,8 @@ services:
     healthcheck:
       test: "mysqladmin ping --silent -u$${MYSQL_USER} -p$${MYSQL_PASSWORD}"
     restart: on-failure
+    depends_on:
+      - "init"
     networks:
       - backend
 

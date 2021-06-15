@@ -8,44 +8,39 @@ Install [Docker](https://docs.docker.com/engine/install/) with [Docker Compose](
 
 ## Run Application
 
-#### 1. Download Docker Compose Configuration File
+#### 1. Download Repository With Docker Compose Configuration File 
 
-Download the following file:
+Check out the git repository:
+```bash
+git clone https://github.com/oroinc/orocommerce-application-demo-docker.git
+cd orocommerce-application-demo-docker
+```
+Or download the archive file and extract it:
 ``` bash
-mkdir orocommerce-demo
-cd orocommerce-demo
-wget https://raw.githubusercontent.com/oroinc/docker/master/docker-compose.yml
+wget https://github.com/oroinc/orocommerce-application-demo-docker/archive/master.tar.gz -O - | tar -xzf -
+cd orocommerce-application-demo-docker
 ```
-Or check out the git repository:
-```bash
-git clone https://github.com/oroinc/docker.git orocommerce-demo
-cd orocommerce-demo
-```
-#### 2. Restore Volumes with Required Data to Launch the Application
 
-```bash
-docker-compose run --rm restore
-```
+#### 2. Run Application Containers
 
 The configuration is entirely predefined, and you can only change the name of the domain where the application will be located. By default, it is `oro.demo`. If you need to change the domain, create an `.env` file with content `ORO_APP_DOMAIN=my-custom-domain.demo`.
 
-#### 3. Run Application Containers
-
+Run containers:
 ```bash
 docker-compose up -d
 ```
 
 The docker-compose will download the required images and create networks and run containers. To track the logs from the php-fpm container, run `docker-compose logs -f php-fpm`. To get the list of containers, run: `docker-compose ps`.
 
-#### 4. Add a Record to File `/etc/hosts`
+#### 3. Add a Record to File `/etc/hosts`
 
 ```
 127.0.0.1 oro.demo
 ```
 
-#### 5. Open the Application in a Browser
+#### 4. Open the Application in a Browser
 
-http://oro.demo
+[http://oro.demo](http://oro.demo)
 
 ## Access the Mail Catcher
 
@@ -78,7 +73,3 @@ All these services must be running, and MySQL database must be prepared for a fu
     - public:/var/www/oro_app/public
     - var:/var/www/oro_app/var
 ```
-
-To remove data, remove docker volumes. For example, to remove ALL volumes, run `docker volume ls -q | xargs -r docker volume rm`.
-
-To manage containers and volumes, use `docker-compose`.
