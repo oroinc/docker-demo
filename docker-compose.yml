@@ -28,14 +28,12 @@ services:
   db:
     image: docker.io/library/mysql:8
     hostname: mysql
-    entrypoint: /oro-entrypoint.sh
     labels:
       com.symfony.server.service-prefix: ORO_DB
     cap_add:
       - SYS_NICE
     volumes:
       - mysql:/var/lib/mysql
-      - ./oro-entrypoint.sh:/oro-entrypoint.sh
     environment:
       MYSQL_ROOT_PASSWORD: orodbpass
       MYSQL_DATABASE: orodb
@@ -46,7 +44,8 @@ services:
       test: "mysqladmin ping --silent -u$${MYSQL_USER} -p$${MYSQL_PASSWORD}"
     restart: on-failure
     depends_on:
-      - "init"
+      init:
+        condition: service_completed_successfully
     networks:
       - backend
 
