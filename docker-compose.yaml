@@ -14,7 +14,7 @@ x-environment:
 
 services:
   init:
-    image: docker.io/oroinc/commerce-crm-application-backup-sample_data:latest
+    image: ${ORO_IMAGE-docker.io/oroinc/commerce-crm-application}-backup-sample_data:${ORO_APP_VERSION-latest}
     hostname: init
     command: bash
       -c "[ -e /var/lib/mysql/wait.lock ] || { rm -rf /var/www/oro_app/config/* /var/www/oro_app/public/* /var/www/oro_app/var/* /var/lib/mysql/* ;
@@ -60,7 +60,7 @@ services:
       - backend
 
   php-fpm:
-    image: docker.io/oroinc/commerce-crm-application:latest
+    image: ${ORO_IMAGE-docker.io/oroinc/commerce-crm-application}:${ORO_APP_VERSION-latest}
     hostname: php-fpm
     # healthcheck:
       # test: "php-fpm-healthcheck"
@@ -75,7 +75,7 @@ services:
       - backend
 
   nginx:
-    image: docker.io/oroinc/commerce-crm-application:latest
+    image: ${ORO_IMAGE-docker.io/oroinc/commerce-crm-application}:${ORO_APP_VERSION-latest}
     hostname: nginx
     ports:
       - 80:80
@@ -94,7 +94,7 @@ services:
           - ${ORO_APP_DOMAIN-oro.demo}
 
   ws:
-    image: docker.io/oroinc/commerce-crm-application:latest
+    image: ${ORO_IMAGE-docker.io/oroinc/commerce-crm-application}:${ORO_APP_VERSION-latest}
     hostname: ws
     user: ${USER_RUNTIME:-www-data}
     restart: on-failure
@@ -109,7 +109,7 @@ services:
       - backend
 
   consumer:
-    image: docker.io/oroinc/commerce-crm-application:latest
+    image: ${ORO_IMAGE-docker.io/oroinc/commerce-crm-application}:${ORO_APP_VERSION-latest}
     hostname: consumer
     user: ${USER_RUNTIME:-www-data}
     restart: on-failure
@@ -123,7 +123,7 @@ services:
       - backend
 
   cron:
-    image: docker.io/oroinc/commerce-crm-application:latest
+    image: ${ORO_IMAGE-docker.io/oroinc/commerce-crm-application}:${ORO_APP_VERSION-latest}
     hostname: cron
     restart: on-failure
     command: cron
