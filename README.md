@@ -12,13 +12,13 @@ Install [Docker](https://docs.docker.com/engine/install/) with [Docker Compose](
 
 Check out the git repository:
 ```bash
-git clone https://github.com/oroinc/docker-application-demo.git
-cd docker-application-demo
+git clone https://github.com/oroinc/docker-demo.git
+cd docker-demo
 ```
 Or download the archive file and extract it:
 ```bash
-wget https://github.com/oroinc/docker-application-demo/archive/master.tar.gz -O - | tar -xzf -
-cd docker-application-demo
+wget https://github.com/oroinc/docker-demo/archive/master.tar.gz -O - | tar -xzf -
+cd docker-demo
 ```
 
 #### 2. Run Application Containers
