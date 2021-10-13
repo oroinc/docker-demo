@@ -53,7 +53,10 @@ To track the logs from the php-fpm container, run `docker-compose logs -f php-fp
 
 #### 4. Open the Application in a Browser
 
-[http://oro.demo](http://oro.demo)
+Now, you can open URL [http://oro.demo](http://oro.demo) in your browser.
+
+To access the back-office, use *admin* as both login and password.
+To access the storefront, use credentials of the predefined demo user roles. To log in as a buyer, use *BrandaJSanborn@example.org* both as your login and password. To log in a manager, use *AmandaRCole@example.org* both as your login and password.
 
 ## Access the Mail Catcher
 
