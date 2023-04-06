@@ -1,10 +1,10 @@
 # Run Oro Application Demo in Docker
 
-## Prerequisite
+## Prerequisites
 
 Install [Docker](https://docs.docker.com/engine/install/) with [Docker Compose](https://docs.docker.com/compose/install/).
 
-**Note:** The application uses 80 port, so make sure that other services do not use them.
+**Note:** The application uses port 80, so make sure that other services do not use it.
 
 ## Run Application
 
@@ -23,21 +23,21 @@ cd docker-demo
 
 #### 2. Run Application Containers
 
-The configuration is entirely predefined, and you can only change the name of the domain where the application will be located. By default, it is `oro.demo`. If you need to change the domain, edit an `.env` file and change `ORO_APP_DOMAIN=my-custom-domain.demo`.
+The configuration is entirely predefined, and you can only change the domain name where the application will be located. By default, it is `oro.demo`. If you need to change the domain, edit the `.env` file and change `ORO_APP_DOMAIN=my-custom-domain.demo`.
 
 Run init service:
 ```bash
 docker compose up restore
 ```
 
-Alternatively, you can install the application from scratch. This will require more time and resources.
+Alternatively, you can install the application from scratch, but it will require more time and resources.
 
 Run install service:
 ```bash
 docker compose up install
 ```
 
-After the application is installed or initialized, it can be run.
+You can run the application as soon as it is installed or initialized.
 
 Run application:
 ```bash
@@ -46,17 +46,17 @@ docker compose up application
 
 The docker compose will download the required images, create networks and run containers.
 Application [orocommerce-application](https://github.com/oroinc/orocommerce-application) is used by default.
-You can run other community applications, such as `crm-application`, `platform-application` or `commerce-crm-application`.
-To select another application, set a other image in `.env` file, for example:
+You can run other community applications, such as `crm-application`, `platform-application`, or `commerce-crm-application`.
+To select another application, set another image in the `.env` file, for example:
 ```bash
 ORO_IMAGE=docker.io/oroinc/crm-application
 ```
-If you want to get the application in a different locale, you need to add the contents of the file `.env-locale-de_DE` or `.env-locale-fr_FR` to `.env` and restart the restore service and application.
+If you want to get the application in a different locale, add the contents of the file `.env-locale-de_DE` or `.env-locale-fr_FR` to `.env` and restart the restore service and application.
 ```bash
 cat .env-locale-de_DE >> .env
 ```
 
-To track the logs from the php-fpm-app container, run `docker compose logs -f php-fpm-app`. To get the list of containers, run: `docker compose ps`.
+To track the logs from the php-fpm-app container, run `docker compose logs -f php-fpm-app`. To get the list of containers, run `docker compose ps`.
 
 #### 3. Add a Record to File `/etc/hosts`
 
@@ -69,25 +69,25 @@ To track the logs from the php-fpm-app container, run `docker compose logs -f ph
 Now, you can open URL [http://oro.demo](http://oro.demo) in your browser.
 
 To access the back-office, use *admin* as both login and password.
-To access the storefront, use credentials of the predefined demo user roles. To log in as a buyer, use *BrandaJSanborn@example.org* both as your login and password. To log in a manager, use *AmandaRCole@example.org* both as your login and password.
+To access the storefront, use the credentials of the predefined demo user roles. To log in as a buyer, use *BrandaJSanborn@example.org* both as your login and password. To log in as a manager, use *AmandaRCole@example.org* both as your login and password.
 
 ## Access the Mail Catcher
 
-[Smtp service](https://github.com/mailhog/MailHog) is additionally launched so you could send emails from the application. It receives all mail and a web interface that enables you to view it and perform the required actions. The web interface for the mail catcher is available on address [http://oro.demo/mailcatcher](http://oro.demo/mailcatcher).
+[Smtp service](https://github.com/mailhog/MailHog) is additionally launched so that you can send emails from the application. It receives all mail and has a web interface that enables you to view it and perform the required actions. The web interface for the mail catcher is available at the address [http://oro.demo/mailcatcher](http://oro.demo/mailcatcher).
 
 ## Stop the Application
 
-- To stop and remove all containers, use the following command: `docker compose down`.
+- To stop and remove all containers, run `docker compose down`.
 
-- To stop and remove all containers with the data saved in volumes, use the following command: `docker compose down -v`.
+- To stop and remove all containers with the data saved in volumes, run `docker compose down -v`.
 
 ## Troubleshooting
 
-- If you deployed the application before, pull up fresh images with `docker compose pull`.
+- If you deployed the application before, pull fresh images with `docker compose pull`.
 
 ## About this Project
 
-This repository provides a Docker Compose configuration file (compose.yaml) and demonstrate how you can run different applications + required services in containers. Oro Inc. provide images with applications Community Edition in public Docker Hub.
+This repository provides a Docker Compose configuration file (compose.yaml) and demonstrates how to run different applications + required services in containers. Oro Inc. provides images with applications Community Edition in public Docker Hub.
 
 **This deployment is NOT intended for a production environment.**
 
@@ -96,8 +96,8 @@ OroCommerce Community Edition: [docker.io/oroinc/orocommerce-application](https:
 OroCRM Community Edition: [docker.io/oroinc/crm-application](https://hub.docker.com/r/oroinc/crm-application)
 OroPlatform Community Edition: [docker.io/oroinc/platform-application](https://hub.docker.com/r/oroinc/platform-application)
 
-One image is used to run containers in several roles: web server, php-fpm, consumer, websocket server, cron service.
-All these services must be running, and PostgreSQL database must be prepared for a full-fledged application.
+One image is used to run containers in several roles: web server, php-fpm, consumer, websocket server, and cron service.
+All these services must be running, and the PostgreSQL database must be prepared for a full-fledged application.
 
 License
 -------
