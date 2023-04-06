@@ -39,7 +39,7 @@ docker compose up install
 After the application is installed or initialized, it can be run.
 Run application:
 ```bash
-docker compose up -d application
+docker compose up application
 ```
 
 The docker compose will download the required images, create networks and run containers.
