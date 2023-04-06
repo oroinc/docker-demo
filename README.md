@@ -4,7 +4,7 @@
 
 Install [Docker](https://docs.docker.com/engine/install/) with [Docker Compose](https://docs.docker.com/compose/install/).
 
-**Note:** The application uses 80 and 8025 ports, so make sure that other services do not use them.
+**Note:** The application uses 80 port, so make sure that other services do not use them.
 
 ## Run Application
 
@@ -23,27 +23,38 @@ cd docker-demo
 
 #### 2. Run Application Containers
 
-The configuration is entirely predefined, and you can only change the name of the domain where the application will be located. By default, it is `oro.demo`. If you need to change the domain, create an `.env` file with content `ORO_APP_DOMAIN=my-custom-domain.demo`.
+The configuration is entirely predefined, and you can only change the name of the domain where the application will be located. By default, it is `oro.demo`. If you need to change the domain, edit an `.env` file and change `ORO_APP_DOMAIN=my-custom-domain.demo`.
 
-Run containers:
+Run init service:
 ```bash
-docker-compose up -d
+docker compose up restore
 ```
 
-The docker-compose will download the required images, create networks and run containers.
-Application `commerce-crm-application` is used by default.
-You can run other community applications, such as `crm-application`, `platform-application` or `commerce-crm-application-de`.
-To select another application, set a different image in `.env` file, for example:
+Alternatively, you can install the application from scratch. This will require more time and resources.
+Run install service:
+```bash
+docker compose up install
+```
+
+After the application is installed or initialized, it can be run.
+Run application:
+```bash
+docker compose up -d application
+```
+
+The docker compose will download the required images, create networks and run containers.
+Application [orocommerce-application](https://github.com/oroinc/orocommerce-application) is used by default.
+You can run other community applications, such as `crm-application`, `platform-application` or `commerce-crm-application`.
+To select another application, set a other image in `.env` file, for example:
 ```bash
 ORO_IMAGE=docker.io/oroinc/crm-application
 ```
-Alternatively, you can set a variable before the docker-compose command without creating the `.env` file:
+If you want to get the application in a different locale, you need to add the contents of the file `.env-locale-de_DE` or `.env-locale-fr_FR` to `.env` and restart the restore service and application.
 ```bash
-ORO_IMAGE=docker.io/oroinc/crm-application docker-compose up -d
+cat .env-locale-de_DE >> .env
 ```
-You can also select a different tag (version). For example, set variable `ORO_APP_VERSION=4.2` in `.env` or in the command line.
 
-To track the logs from the php-fpm container, run `docker-compose logs -f php-fpm`. To get the list of containers, run: `docker-compose ps`.
+To track the logs from the php-fpm-app container, run `docker compose logs -f php-fpm-app`. To get the list of containers, run: `docker compose ps`.
 
 #### 3. Add a Record to File `/etc/hosts`
 
@@ -60,30 +71,35 @@ To access the storefront, use credentials of the predefined demo user roles. To 
 
 ## Access the Mail Catcher
 
-[Smtp service](https://github.com/mailhog/MailHog) is additionally launched so you could send emails from the application. It receives all mail and a web interface that enables you to view it and perform the required actions. The web interface for the mail catcher is available on port `8025`. You can open it by URL http://localhost:8025.
+[Smtp service](https://github.com/mailhog/MailHog) is additionally launched so you could send emails from the application. It receives all mail and a web interface that enables you to view it and perform the required actions. The web interface for the mail catcher is available on address [http://oro.demo/mailcatcher](http://oro.demo/mailcatcher).
 
 ## Stop the Application
 
-- To stop and remove all containers, use the following command: `docker-compose down`.
+- To stop and remove all containers, use the following command: `docker compose down`.
 
-- To stop and remove all containers with the data saved in volumes, use the following command: `docker-compose down -v`.
+- To stop and remove all containers with the data saved in volumes, use the following command: `docker compose down -v`.
 
 ## Troubleshooting
 
-- If you deployed the application before, pull up fresh images with `docker-compose pull`.
+- If you deployed the application before, pull up fresh images with `docker compose pull`.
 
 ## About this Project
 
-This repository provides a Docker Compose configuration file (docker-compose.yaml) and demonstrate how you can run different applications + required services in containers. Oro Inc. provide images with applications Community Edition in public Docker Hub.
+This repository provides a Docker Compose configuration file (compose.yaml) and demonstrate how you can run different applications + required services in containers. Oro Inc. provide images with applications Community Edition in public Docker Hub.
 
 **This deployment is NOT intended for a production environment.**
 
 **Docker images with different applications:**
-OroCommerce Community Edition: [docker.io/oroinc/commerce-crm-application](https://hub.docker.com/r/oroinc/commerce-crm-application)
+OroCommerce Community Edition: [docker.io/oroinc/orocommerce-application](https://hub.docker.com/r/oroinc/orocommerce-application)
 OroCRM Community Edition: [docker.io/oroinc/crm-application](https://hub.docker.com/r/oroinc/crm-application)
 OroPlatform Community Edition: [docker.io/oroinc/platform-application](https://hub.docker.com/r/oroinc/platform-application)
-OroCommerce Community Edition for Germany: [docker.io/oroinc/commerce-crm-application-de](https://hub.docker.com/r/oroinc/commerce-crm-application-de)
-
 
 One image is used to run containers in several roles: web server, php-fpm, consumer, websocket server, cron service.
-All these services must be running, and MySQL database must be prepared for a full-fledged application.
+All these services must be running, and PostgreSQL database must be prepared for a full-fledged application.
+
+License
+-------
+
+[MIT][1] Copyright (c) 2013 - 2023, Oro, Inc.
+
+[1]:    LICENSE
