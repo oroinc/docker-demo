@@ -31,12 +31,14 @@ docker compose up restore
 ```
 
 Alternatively, you can install the application from scratch. This will require more time and resources.
+
 Run install service:
 ```bash
 docker compose up install
 ```
 
 After the application is installed or initialized, it can be run.
+
 Run application:
 ```bash
 docker compose up application
