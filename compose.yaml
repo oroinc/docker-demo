@@ -1,4 +1,3 @@
-version: "3.9"
 x-depends_on: &default-depends_on
   "db":
     condition: service_healthy
@@ -9,8 +8,7 @@ services:
   application:
     image: $ORO_IMAGE:$ORO_IMAGE_TAG
     command: -- true
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       "web":
         condition: service_started
@@ -22,32 +20,35 @@ services:
   web:
     image: $ORO_IMAGE:$ORO_IMAGE_TAG
     command: nginx
-    env_file:
-      - .env
+    env_file: .env
     restart: unless-stopped
     ports:
-      - target: 80
+      - target: 8080
         published: 80
         mode: host
     depends_on:
+      "init":
+        condition: service_completed_successfully    
       "php-fpm-app":
         condition: service_healthy
       "ws":
         condition: service_started
-    volumes:
-      - cache:/var/www/oro/var/cache:ro
-      - public_storage:/var/www/oro/public/media:ro
-      - private_storage:/var/www/oro/var/data:ro
     networks:
       default:
         aliases:
           - ${ORO_APP_DOMAIN}
+    volumes:
+      - cache:/var/www/oro/var/cache:ro
+      - public:/var/www/oro/public
+      - public_storage:/var/www/oro/public/media:ro
+      - private_storage:/var/www/oro/var/data:ro
+      - etc_nginx:/etc/nginx
 
   php-fpm-app:
     image: $ORO_IMAGE:$ORO_IMAGE_TAG
     command: php-fpm
-    env_file:
-      - .env
+    user: ${ORO_USER_RUNTIME:-www-data}
+    env_file: .env
     healthcheck:
       test: "php-fpm-healthcheck"
       interval: 5s
@@ -56,16 +57,19 @@ services:
     restart: unless-stopped
     depends_on:
       <<: *default-depends_on
+      "init":
+        condition: service_completed_successfully    
     volumes:
-      - cache:/var/www/oro/var/cache
+      - cache:/var/www/oro/var/cache:ro
+      - public:/var/www/oro/public
       - public_storage:/var/www/oro/public/media
       - private_storage:/var/www/oro/var/data
+      - run_php_fpm:/run/php-fpm
 
   ws:
     image: $ORO_IMAGE:$ORO_IMAGE_TAG
-    command: console gos:websocket:server -v
-    env_file:
-      - .env
+    command: websocket
+    env_file: .env
     restart: unless-stopped
     user: ${ORO_USER_RUNTIME:-www-data}
     init: true
@@ -73,15 +77,15 @@ services:
       "php-fpm-app":
         condition: service_healthy
     volumes:
-      - cache:/var/www/oro/var/cache
+      - cache:/var/www/oro/var/cache:ro
+      - public:/var/www/oro/public
       - public_storage:/var/www/oro/public/media
       - private_storage:/var/www/oro/var/data
 
   consumer:
     image: $ORO_IMAGE:$ORO_IMAGE_TAG
-    command: console oro:message-queue:consume --memory-limit=500 -v
-    env_file:
-      - .env
+    command: consumer
+    env_file: .env
     restart: unless-stopped
     user: ${ORO_USER_RUNTIME:-www-data}
     init: true
@@ -89,15 +93,15 @@ services:
       "php-fpm-app":
         condition: service_healthy
     volumes:
-      - cache:/var/www/oro/var/cache
+      - cache:/var/www/oro/var/cache:ro
+      - public:/var/www/oro/public
       - public_storage:/var/www/oro/public/media
       - private_storage:/var/www/oro/var/data
 
   cron:
     image: $ORO_IMAGE:$ORO_IMAGE_TAG
     command: cron
-    env_file:
-      - .env
+    env_file: .env
     restart: unless-stopped
     ulimits:
       nofile:
@@ -107,7 +111,8 @@ services:
       "php-fpm-app":
         condition: service_healthy
     volumes:
-      - cache:/var/www/oro/var/cache
+      - cache:/var/www/oro/var/cache:ro
+      - public:/var/www/oro/public
       - public_storage:/var/www/oro/public/media
       - private_storage:/var/www/oro/var/data
 
@@ -115,27 +120,31 @@ services:
     image: $ORO_IMAGE:$ORO_IMAGE_TAG
     command: console oro:install --no-interaction --timeout=3600 --user-name="$ORO_USER_NAME" --user-email="$ORO_USER_EMAIL" --user-firstname="$ORO_USER_FIRSTNAME" --user-lastname="$ORO_USER_LASTNAME" --user-password="$ORO_USER_PASSWORD" --sample-data="$ORO_SAMPLE_DATA" --organization-name="$ORO_ORGANIZATION_NAME" --language=$ORO_LANGUAGE --formatting-code=$ORO_FORMATTING_CODE --application-url="$ORO_APP_PROTOCOL://$ORO_APP_DOMAIN" $ORO_INSTALL_OPTIONS
     user: $ORO_USER_RUNTIME
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       <<: *default-depends_on
-    volumes:
-      - cache:/var/www/oro/var/cache
-      - public_storage:/var/www/oro/public/media
-      - private_storage:/var/www/oro/var/data
 
   restore: &restore
     image: ${ORO_IMAGE_INIT}${ORO_LANGUAGE_SUFFIX-}:$ORO_IMAGE_TAG
     command: restore
     user: $ORO_USER_RUNTIME
-    env_file:
-      - .env
+    env_file: .env
     depends_on:
       <<: *default-depends_on
     volumes:
       - cache:/var/www/oro/var/cache
+      - public:/var/www/oro/public
       - public_storage:/var/www/oro/public/media
       - private_storage:/var/www/oro/var/data
+
+  init:
+    image: ${ORO_IMAGE}:$ORO_IMAGE_TAG
+    command: init
+    env_file: .env
+    volumes:
+      - etc_nginx:/etc/nginx
+      - run_php_fpm:/run/php-fpm
+      - public:/var/www/oro/public
 
   db:
     image: docker.io/oroinc/pgsql:${ORO_PG_VER}
@@ -150,8 +159,6 @@ services:
       test: "pg_isready -U$${POSTGRES_USER} -d$${POSTGRES_DB}"
       start_period: 60s
     restart: unless-stopped
-    volumes:
-      - db_data:/var/lib/postgresql/data
 
   mail:
     image: mailhog/mailhog
@@ -163,7 +170,9 @@ services:
     restart: unless-stopped
 
 volumes:
-  db_data: {}
   cache: {}
   public_storage: {}
   private_storage: {}
+  etc_nginx: {}
+  run_php_fpm: {}
+  public: {}
