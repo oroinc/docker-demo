@@ -123,6 +123,11 @@ services:
     env_file: .env
     depends_on:
       <<: *default-depends_on
+    volumes:
+      - cache:/var/www/oro/var/cache
+      - public:/var/www/oro/public
+      - public_storage:/var/www/oro/public/media
+      - private_storage:/var/www/oro/var/data
 
   restore: &restore
     image: ${ORO_IMAGE_INIT}${ORO_LANGUAGE_SUFFIX-}:$ORO_IMAGE_TAG
