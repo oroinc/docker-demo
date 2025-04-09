@@ -10,8 +10,6 @@ services:
         condition: service_started
       "cron":
         condition: service_started
-      "operator":
-        condition: service_started
 
   web:
     image: $ORO_IMAGE_BASE_RUNTIME:$ORO_BASELINE_VERSION
@@ -87,7 +85,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - oro_app:/var/www/oro
-      - cache:/var/www/oro/var/cache:ro
+      - cache:/var/www/oro/var/cache
       - multihost_operation_folder:$ORO_MULTIHOST_OPERATION_FOLDER
       - maintenance_folder:${ORO_MAINTENANCE_LOCK_FOLDER}
       - public_storage:/var/www/oro/public/media
@@ -110,7 +108,7 @@ services:
         condition: service_healthy
     volumes:
       - oro_app:/var/www/oro
-      - cache:/var/www/oro/var/cache:ro
+      - cache:/var/www/oro/var/cache
       - maintenance_folder:${ORO_MAINTENANCE_LOCK_FOLDER}
       - public_storage:/var/www/oro/public/media
       - private_storage:/var/www/oro/var/data
@@ -132,7 +130,7 @@ services:
         condition: service_healthy
     volumes:
       - oro_app:/var/www/oro
-      - cache:/var/www/oro/var/cache:ro
+      - cache:/var/www/oro/var/cache
       - maintenance_folder:${ORO_MAINTENANCE_LOCK_FOLDER}
       - public_storage:/var/www/oro/public/media
       - private_storage:/var/www/oro/var/data
@@ -153,27 +151,6 @@ services:
       "php-fpm-app":
         condition: service_healthy
     volumes:
-      - oro_app:/var/www/oro
-      - cache:/var/www/oro/var/cache:ro
-      - multihost_operation_folder:$ORO_MULTIHOST_OPERATION_FOLDER
-      - maintenance_folder:${ORO_MAINTENANCE_LOCK_FOLDER}
-      - public_storage:/var/www/oro/public/media
-      - private_storage:/var/www/oro/var/data
-
-  operator:
-    image: $ORO_IMAGE_INIT${ORO_LANGUAGE_SUFFIX-}:$ORO_IMAGE_TAG
-    command: operator
-    env_file: .env
-    environment:
-      COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME
-      DOCKER_API_VERSION: v1.43
-      ORO_LOG_PATH: php://stderr
-    restart: unless-stopped
-    depends_on:
-      "php-fpm-app":
-        condition: service_healthy
-    volumes:
-      - /run/docker.sock:/run/docker.sock
       - oro_app:/var/www/oro
       - cache:/var/www/oro/var/cache
       - multihost_operation_folder:$ORO_MULTIHOST_OPERATION_FOLDER
