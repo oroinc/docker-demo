@@ -86,13 +86,6 @@ This repository provides a Docker Compose configuration file (compose.yaml) and 
 
 **This deployment is NOT intended for a production environment.**
 
-**Docker images with different applications:**
-OroCommerce Community Edition: [docker.io/oroinc/orocommerce-application](https://hub.docker.com/r/oroinc/orocommerce-application)
-OroCRM Community Edition: [docker.io/oroinc/crm-application](https://hub.docker.com/r/oroinc/crm-application)
-OroPlatform Community Edition: [docker.io/oroinc/platform-application](https://hub.docker.com/r/oroinc/platform-application)
-
-One image is used to run containers in several roles: web server, php-fpm, consumer, websocket server, and cron service.
-All these services must be running, and the PostgreSQL database must be prepared for a full-fledged application.
 
 License
 -------
