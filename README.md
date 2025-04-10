@@ -46,11 +46,6 @@ docker compose up application
 
 The docker compose will download the required images, create networks and run containers.
 Application [orocommerce-application](https://github.com/oroinc/orocommerce-application) is used by default.
-You can run other community applications, such as `crm-application`, `platform-application`, or `commerce-crm-application`.
-To select another application, set another image in the `.env` file, for example:
-```bash
-ORO_IMAGE=docker.io/oroinc/crm-application
-```
 If you want to get the application in a different locale, add the contents of the file `.env-locale-de_DE` or `.env-locale-fr_FR` to `.env` and restart the restore service and application.
 ```bash
 cat .env-locale-de_DE >> .env
