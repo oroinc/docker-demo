@@ -50,6 +50,7 @@ services:
     command:
       - -c
       - |
+        echo "$(jq '.properties.sites.propertyNames.pattern = ".*"' /opt/oro-nginx-tool/variables.schema.json)" > /opt/oro-nginx-tool/variables.schema.json
         /usr/local/bin/docker-entrypoint.sh nginx-init && sed -i '/gridfs/d; /mongo/d' /opt/oro-nginx/etc/sites-available/*.conf
     env_file: .env
     depends_on:
